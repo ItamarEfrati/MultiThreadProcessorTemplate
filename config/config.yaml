@@ -1,0 +1,16 @@
+defaults:
+  - _self_
+  - hydra: dev
+  - pipelines: training
+  - hyperparameters_tuning:
+  - dataloader:
+
+preprocess: true
+evaluate: false
+seed: 42
+
+
+
+
+
+
