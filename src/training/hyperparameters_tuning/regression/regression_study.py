@@ -6,12 +6,13 @@ from abc import ABC
 from matplotlib import pyplot as plt
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
-from src.training.hyperparamets_tuning.study import Study
+from src.training.hyperparameters_tuning.study import Study
 
 
-class regression_study(Study, ABC):
+class RegressionStudy(Study, ABC):
 
-    def save_results(self, true, preds, prob, title):
+    def save_results(self, true, results, title):
+        preds = results[0]
         plots_dir = os.path.join(self.working_dir, 'plots')
         os.makedirs(plots_dir, exist_ok=True)
 

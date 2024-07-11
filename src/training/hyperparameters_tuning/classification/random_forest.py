@@ -4,10 +4,10 @@ from optuna.samplers import BaseSampler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_val_score
 
-from classification.hyperparameters_tuning.abstract_study import Study
+from src.training.hyperparameters_tuning.classification.classificationstudy import ClassificationStudy
 
 
-class RandomForestStudy(Study):
+class RandomForestStudy(ClassificationStudy):
 
     def __init__(self,
                  feature_type: str,
@@ -19,8 +19,7 @@ class RandomForestStudy(Study):
                  n_jobs: int,
                  cv: int,
                  n_jobs_forest: int):
-        super().__init__(feature_type, seed, sampler, direction, optimize_metric, n_trials, n_jobs)
-        self.cv = cv
+        super().__init__(feature_type, seed, sampler, direction, optimize_metric, n_trials, n_jobs, cv)
         self.n_jobs_forest = n_jobs_forest
 
     def get_study_name(self):
@@ -45,9 +44,10 @@ class RandomForestStudy(Study):
         train_proba = model.predict_proba(X_train)
         test_proba = model.predict_proba(X_test)
 
-        return np.argmax(train_proba, -1), train_proba, np.argmax(test_proba, -1), test_proba, model
+        return {'train': [np.argmax(train_proba, -1), train_proba],
+                'test': [np.argmax(test_proba, -1), test_proba]}, model
 
-    def objective(self, trial: optuna.Trial, X, y, groups):
+    def get_model(self, trial: optuna.Trial):
         n_estimators = trial.suggest_int('n_estimators', 10, 10000, step=10)
         max_depth = trial.suggest_int('max_depth', 2, 32, log=True)
         min_samples_split = trial.suggest_float('min_samples_split', 0.1, 1.0)
@@ -70,7 +70,4 @@ class RandomForestStudy(Study):
             n_jobs=self.n_jobs
         )
 
-        score = cross_val_score(model, X, y, groups=groups, cv=self.cv, scoring=self.optimize_metric).mean()
-        trial.set_user_attr(self.optimize_metric, score)
-
-        return score
+        return model

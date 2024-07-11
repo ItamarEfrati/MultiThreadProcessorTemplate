@@ -2,11 +2,11 @@ defaults:
   - _self_
   - hydra: dev
   - pipelines: training
-  - hyperparameters_tuning:
-  - dataloader:
+  - study: random_forest_classification
+  - dataloader: text_counter
 
-preprocess: true
-evaluate: false
+preprocess: false
+train: true
 seed: 42
 
 

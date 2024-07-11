@@ -1,7 +1,6 @@
 import typing
 
 import numpy as np
-import xgboost as xgb
 import optuna
 from optuna.samplers import BaseSampler
 from sklearn.metrics import get_scorer
@@ -9,10 +8,10 @@ from sklearn.metrics import get_scorer
 from sklearn.model_selection import cross_val_score
 from xgboost import XGBClassifier
 
-from classification.hyperparameters_tuning.abstract_study import Study
+from src.training.hyperparameters_tuning.classification.classificationstudy import ClassificationStudy
 
 
-class XGBootsStudy(Study):
+class XGBootsStudy(ClassificationStudy):
 
     def __init__(self,
                  feature_type: str,
@@ -26,8 +25,7 @@ class XGBootsStudy(Study):
                  n_jobs_forest: int,
                  xgb_objective: str,
                  booster: typing.Literal["gbtree", "dart"]):
-        super().__init__(feature_type, seed, sampler, direction, optimize_metric, n_trials, n_jobs)
-        self.cv = cv
+        super().__init__(feature_type, seed, sampler, direction, optimize_metric, n_trials, n_jobs, cv)
         self.n_jobs_forest = n_jobs_forest
         self.xgb_objective = xgb_objective
         self.booster = booster
@@ -46,9 +44,10 @@ class XGBootsStudy(Study):
         model = XGBClassifier(**params)
         model.fit(np.vstack((X_train, X_test)), np.vstack((y_train.reshape(-1, 1), y_test.reshape(-1, 1))).reshape(-1))
 
-        return np.argmax(train_proba, -1), train_proba, np.argmax(test_proba, -1), test_proba, model
+        return {'train': [np.argmax(train_proba, -1), train_proba],
+                'test': [np.argmax(test_proba, -1), test_proba]}, model
 
-    def objective(self, trial: optuna.Trial, X, y, groups):
+    def get_model(self, trial: optuna.Trial):
         param = {"objective": self.xgb_objective,
                  "n_estimators": trial.suggest_int('n_estimators', 10, 2000, step=10),
                  "max_depth": trial.suggest_int("max_depth", low=2, high=12),
@@ -74,13 +73,4 @@ class XGBootsStudy(Study):
 
         model = XGBClassifier(**param)
 
-        if self.cv > 1:
-            score = cross_val_score(model, X, y, groups=groups, cv=self.cv, scoring=self.optimize_metric).mean()
-        else:
-            model.fit(X, y)
-            y_pred = model.predict(X)
-            score = get_scorer(self.optimize_metric)._score_func(y, y_pred)
-        trial.set_user_attr(self.optimize_metric, score)
-
-
-        return score
+        return model

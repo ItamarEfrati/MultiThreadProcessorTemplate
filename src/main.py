@@ -26,18 +26,18 @@ def initiate_mini_services(service_config):
     return services_dict
 
 
-@hydra.main(version_base='1.2', config_path="config", config_name="config.yaml")
+@hydra.main(version_base='1.2', config_path=os.path.join('..', "config"), config_name="config.yaml")
 def main(cfg: DictConfig) -> None:
     if cfg.preprocess:
         video_preprocess = instantiate(cfg.pipelines.pipeline_executor)
         micro_services = initiate_mini_services(cfg.pipelines)
         video_preprocess = video_preprocess(services=micro_services)
         video_preprocess.run()
-    if cfg.evaluate:
+    if cfg.train:
         dataloader = instantiate(cfg.dataloader)
         data = dataloader.load_data()
-        evaluator = instantiate(cfg.evaluation.study)
-        evaluator.run_study(data)
+        study = instantiate(cfg.study)
+        study.run_study(data)
 
 
 if __name__ == '__main__':

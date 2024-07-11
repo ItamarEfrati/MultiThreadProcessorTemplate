@@ -2,8 +2,14 @@
 # The microservices are order by their operating order.
 
 pipeline_executor:
-  _target_: src.PipelineExecutor
+  _target_: src.pipline_executor.PipelineExecutor
   _partial_: True
-  input_dir: videos
-  pipeline_type: evaluation
+  input_dir: text
+  pipeline_type: training
   is_input_data_in_folder: True
+
+
+text_parsers:
+ text_parser_n_threads: 1
+ text_parser:
+     _target_: src.micro_services.text_counter.TextCounter

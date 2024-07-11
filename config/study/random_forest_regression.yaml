@@ -1,0 +1,13 @@
+_target_: src.training.hyperparameters_tuning.regression.random_forest.RandomForestRegressionStudy
+sampler:
+  _target_: optuna.samplers.TPESampler
+  n_startup_trials: 1
+  seed: 42
+feature_type: text
+seed: 42
+direction: maximize
+optimize_metric: neg_mean_squared_error
+n_trials: 2
+n_jobs: 1
+n_jobs_forest: -1
+cv: 3

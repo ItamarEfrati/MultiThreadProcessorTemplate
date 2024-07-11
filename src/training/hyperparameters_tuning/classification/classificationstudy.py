@@ -1,3 +1,4 @@
+import json
 import os
 from abc import ABC
 
@@ -7,12 +8,13 @@ from matplotlib import pyplot as plt
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, precision_recall_curve, roc_curve, auc, \
     f1_score
 
-from src.training.hyperparamets_tuning.study import Study
+from src.training.hyperparameters_tuning.study import Study
 
 
-class classification_study(Study, ABC):
+class ClassificationStudy(Study, ABC):
 
-    def save_results(self, true, preds, prob, title):
+    def save_results(self, true, results, title):
+        preds, prob = results
         plots_dir = os.path.join(self.working_dir, 'plots')
         os.makedirs(plots_dir, exist_ok=True)
 
