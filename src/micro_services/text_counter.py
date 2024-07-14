@@ -5,6 +5,9 @@ from src.micro_services.micro_service import MicroService
 
 class TextCounter(MicroService):
 
+    def __init__(self, arg1, arg2):
+        super().__init__()
+
     @property
     def name(self):
         return 'text_counter'

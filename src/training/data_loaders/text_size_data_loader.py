@@ -1,32 +1,25 @@
-import os
-import pathlib
 import random
 from typing import Literal
 
 import numpy as np
-
-from src.constants import *
 
 from src.training.data_loaders.data_loader import DataLoader
 
 
 class TextSizeDataLoader(DataLoader):
 
-    def _load_features(self, split: Literal["train", "val", "test", "all", "predict"]):
-        data_dir = pathlib.Path(DATA_FOLDER, PREPROCESS, PREPROCESS_OUTCOMES + '_' + self.pipeline_type)
+    def _load_features_file(self, features_file):
+        features = []
+        with open(features_file, 'r') as f:
+            size = f.readlines()
+            features.append(int(size[0]))
+        return features
 
-        pattern = 'text_counter_length.txt'
-        features = {}
-        for features_file in data_dir.rglob("**" + os.sep + pattern):
-            with open(features_file, 'r') as f:
-                size = f.readlines()
-                features[features_file.parent.name] = int(size[0])
+    def _format_features(self, features) -> np.ndarray:
+        return np.concat(features).reshape(-1, 1)
 
-        for i in range(2, 100):
-            # some random features
-            features[i] = random.randint(0, 100)
-
-        return np.array(list(features.values())).reshape(-1, 1)
+    def _get_train_indices(self):
+        return list(['1', '2', '3'])
 
     def _load_labels(self, split: Literal["train", "val", "test", "all", "predict"]):
         """
@@ -34,4 +27,14 @@ class TextSizeDataLoader(DataLoader):
         :param split:
         :return:
         """
-        return np.array([random.randint(0, 1) for _ in range(100)])
+        y = np.array([random.randint(0, 1) for _ in range(5)])
+        if split == 'split':
+            y_train = np.array(y[:3])
+            y_test = np.array(y[3:])
+
+            return y_train, y_test
+        else:
+            return y
+
+    def _load_train_groups(self):
+        return (np.array([0, 1, 2]),)

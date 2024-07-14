@@ -1,4 +1,4 @@
-# In this document we can see the different configurations of the evaluation pipeline.
+# In this document we can see the different configurations of the training pipeline.
 # The microservices are order by their operating order.
 
 pipeline_executor:
@@ -13,3 +13,9 @@ text_parsers:
  text_parser_n_threads: 1
  text_parser:
      _target_: src.micro_services.text_counter.TextCounter
+     arg1: 1
+     arg2: 2
+
+
+
+

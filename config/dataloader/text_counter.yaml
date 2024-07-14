@@ -3,6 +3,4 @@ pipeline_type: training
 seed: 42
 labels_path: # add path for labels for real data
 split_data: true
-load_train: true
-load_test: true
-load_predict: False
+pattern: text_counter_length.txt

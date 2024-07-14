@@ -67,7 +67,7 @@ class Study(ABC):
         return score
 
     def run_study(self, data):
-        X_train, y_train, train_groups, X_test, y_test = data
+        X_train, X_test, y_train, y_test, train_groups = data
         storage_name = f"sqlite:///{os.path.join(self.working_dir, self.get_study_name())}.db"
         study = optuna.create_study(
             study_name=self.get_study_name(),
