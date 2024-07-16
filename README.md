@@ -15,7 +15,7 @@ PipeLion Template is designed to provide a ready-to-use structure that integrate
 This template serves as a foundation for developing scalable, efficient, and customizable workflows for various data-driven tasks,
 including ETL (Extract, Transform, Load) operations and machine learning model optimization.
 
-The template cםntains two main components: the data processing pipeline, and the hyper-parameters search study.
+The template contains two main components: the data processing pipeline, and the hyper-parameters search study.
 The data preprocessing pipeline designed to manage and execute data processing pipelines using a microservice architecture. Each microservice handles a specific task
 (e.g., data extraction, transformation, loading, and analytics), allowing for scalability and easy maintenance. The system leverages multiprocess capabilities to
 ensure efficient use of resources and to handle high-throughput data streams.
